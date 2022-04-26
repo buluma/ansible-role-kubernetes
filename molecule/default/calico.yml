@@ -30,7 +30,7 @@
 
   roles:
     - role: buluma.docker
-    - role: geerlingguy.kubernetes
+    - role: buluma.kubernetes
 
   post_tasks:
     - name: Get cluster info.

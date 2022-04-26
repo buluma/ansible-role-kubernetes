@@ -14,7 +14,7 @@ lint: |
 driver:
   name: docker
 platforms:
-  - name: "kubernetes-${image:-docker-ubuntu2004-ansible}-${tag:-latest}${TOX_ENVNAME}"
+  - name: "kubernetes-${image:-docker-ubuntu2104-ansible}-${tag:-latest}${TOX_ENVNAME}"
     image: "${namespace:-buluma}/${image:-docker-ubuntu2104-ansible}:${tag:-latest}"
     command: /sbin/init
     volumes:
@@ -22,4 +22,6 @@ platforms:
     privileged: yes
     pre_build_image: yes
 provisioner:
+  name: ansible
+verifier:
   name: ansible

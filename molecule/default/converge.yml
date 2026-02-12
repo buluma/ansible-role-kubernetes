@@ -25,7 +25,7 @@
       action: setup
 
   roles:
-    - role: ansible-role-kubernetes
+    - role: buluma.kubernetes
 
   post_tasks:
     - name: Get cluster info.

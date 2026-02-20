@@ -1,5 +1,5 @@
 ---
-- name: Ensure Kubernetes repository exists.
+- name: setup-RedHat | Ensure Kubernetes repository exists.
   ansible.builtin.yum_repository:
     name: kubernetes
     description: Kubernetes
@@ -9,16 +9,13 @@
     baseurl: "{{ kubernetes_yum_base_url }}"
     gpgkey: "{{ kubernetes_yum_gpg_key }}"
 
-- name: Add Kubernetes GPG keys.
+- name: setup-RedHat | Add Kubernetes GPG keys.
   ansible.builtin.rpm_key:
     key: "{{ item }}"
     state: present
   register: kubernetes_rpm_key
   with_items: "{{ kubernetes_yum_gpg_key }}"
+  notify: Refresh Kubernetes dnf cache
 
-- name: Make cache if Kubernetes GPG key changed.
-  ansible.builtin.dnf:
-    enablerepo: "kubernetes"
-    disablerepo: "*"
-    state: present
-  when: kubernetes_rpm_key is changed
+- name: setup-RedHat | Flush handlers
+  ansible.builtin.meta: flush_handlers

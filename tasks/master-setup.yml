@@ -1,5 +1,5 @@
 ---
-- name: Create the directory for the kubernetes_config_file
+- name: master-setup | Create the directory for the kubernetes_config_file
   ansible.builtin.file:
     path: "{{ kubernetes_kubeadm_kubelet_config_file_path | dirname }}"
     state: directory
@@ -7,7 +7,7 @@
     group: root
     mode: "0755"
 
-- name: Deploy the config-file for kubeadm and kubelet
+- name: master-setup | Deploy the config-file for kubeadm and kubelet
   ansible.builtin.template:
     src: "kubeadm-kubelet-config.j2"
     dest: "{{ kubernetes_kubeadm_kubelet_config_file_path }}"
@@ -15,7 +15,7 @@
     group: root
     mode: "0644"
 
-- name: Initialize Kubernetes master with kubeadm init
+- name: master-setup | Initialize Kubernetes master with kubeadm init
   ansible.builtin.command: >
     kubeadm init
     --config {{ kubernetes_kubeadm_kubelet_config_file_path }}
@@ -24,7 +24,7 @@
   when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is not defined)
   changed_when: false
 
-- name: Initialize Kubernetes master with kubeadm init and ignore_preflight_errors
+- name: master-setup | Initialize Kubernetes master with kubeadm init and ignore_preflight_errors
   ansible.builtin.command: >
     kubeadm init
     --config {{ kubernetes_kubeadm_kubelet_config_file_path }}
@@ -34,26 +34,26 @@
   when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is defined)
   changed_when: false
 
-- name: Print the init output to screen.
+- name: master-setup | Print the init output to screen.
   ansible.builtin.debug:
     var: kubeadmin_init.stdout
     verbosity: 2
   when: not kubernetes_init_stat.stat.exists
 
-- name: Ensure .kube directory exists.
+- name: master-setup | Ensure .kube directory exists.
   ansible.builtin.file:
     path: ~/.kube
     state: directory
     mode: "0755"
 
-- name: Symlink the kubectl admin.conf to ~/.kube/conf.
+- name: master-setup | Symlink the kubectl admin.conf to ~/.kube/conf.
   ansible.builtin.file:
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
     state: link
     mode: "0644"
 
-- name: Configure Flannel networking.
+- name: master-setup | Configure Flannel networking.
   ansible.builtin.command: "{{ item }}"
   with_items:
     - kubectl apply -f {{ kubernetes_flannel_manifest_file_rbac }}
@@ -62,7 +62,7 @@
   changed_when: "'created' in flannel_result.stdout"
   when: kubernetes_pod_network.cni == 'flannel'
 
-- name: Configure Calico networking.
+- name: master-setup | Configure Calico networking.
   ansible.builtin.command: "{{ item }}"
   with_items:
     - kubectl apply -f {{ kubernetes_calico_manifest_file }}
@@ -70,7 +70,7 @@
   changed_when: "'created' in calico_result.stdout"
   when: kubernetes_pod_network.cni == 'calico'
 
-- name: Get kubernetes version for Weave installation.
+- name: master-setup | Get kubernetes version for Weave installation.
   ansible.builtin.shell: |
     set -euo pipefail
     kubectl version | base64 | tr -d '\n'
@@ -78,7 +78,7 @@
   register: kubectl_version
   when: kubernetes_pod_network.cni == 'weave'
 
-- name: Configure Weave networking.
+- name: master-setup | Configure Weave networking.
   ansible.builtin.command: "{{ item }}"
   with_items:
     - "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
@@ -88,7 +88,7 @@
 
 # TODO: Check if taint exists with something like `kubectl describe nodes`
 # instead of using kubernetes_init_stat.stat.exists check.
-- name: Allow pods on master node (if configured).
+- name: master-setup | Allow pods on master node (if configured).
   ansible.builtin.command: "kubectl taint nodes --all node-role.kubernetes.io/master-"
   when:
     - kubernetes_allow_pods_on_master | bool

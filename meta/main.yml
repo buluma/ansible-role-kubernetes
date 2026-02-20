@@ -7,25 +7,25 @@ galaxy_info:
   description: Kubernetes for Linux.
   company: ShadowNet
   license: Apache-2.0
-  min_ansible_version: '2.1
+  min_ansible_version: "2.1"
   platforms:
     - name: EL
       versions:
         - all
-  - name: Debian
-    versions:
-    - all
-  - name: Ubuntu
-    versions:
-    - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
   galaxy_tags:
     - system
-  - containers
-  - docker
-  - rkt
-  - orchestration
-  - kubernetes
-  - k8s
-  - paas
-  - saas
-  - hosting
+    - containers
+    - docker
+    - rkt
+    - orchestration
+    - kubernetes
+    - k8s
+    - paas
+    - saas
+    - hosting

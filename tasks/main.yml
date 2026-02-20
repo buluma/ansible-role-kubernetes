@@ -1,10 +1,12 @@
 ---
 - name: Include OS-specific variables.
   ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
-- ansible.builtin.include_tasks: setup-RedHat.yml
+- name: Setup RedHat
+  ansible.builtin.include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
 
-- ansible.builtin.include_tasks: setup-Debian.yml
+- name: Setup Debian
+  ansible.builtin.include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
 - name: Ensure dependencies are installed.
@@ -18,7 +20,9 @@
   notify: restart kubelet
   with_items: "{{ kubernetes_packages }}"
 
+- name: Setup Sysctl
 - ansible.builtin.include_tasks: sysctl-setup.yml
+- name: Setup Kubelet
 - ansible.builtin.include_tasks: kubelet-setup.yml
   when: kubernetes_kubelet_extra_args|length > 0
 
@@ -34,6 +38,7 @@
   register: kubernetes_init_stat
 
 # Set up master.
+- name: Setup Master
 - ansible.builtin.include_tasks: master-setup.yml
   when: kubernetes_role == 'master'
 
@@ -54,5 +59,6 @@
   delegate_facts: true
   with_items: "{{ groups['all'] }}"
 
+- name: Setup Node
 - ansible.builtin.include_tasks: node-setup.yml
   when: kubernetes_role == 'node'

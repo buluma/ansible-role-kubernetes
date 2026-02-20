@@ -5,4 +5,4 @@
 repository:
   description: Kubernetes for Linux.
   homepage: https://buluma.github.io/
-  topics: system, containers, docker, rkt, orchestration, kubernetes, k8s, paas, saas, hosting, ansible, molecule, tox, playbook, hacktoberfest
+  topics: system, containers, docker, rkt, orchestration, kubernetes, k8s, paas, saas, hosting, ansible, molecule, playbook

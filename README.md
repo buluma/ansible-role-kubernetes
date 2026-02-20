@@ -23,49 +23,56 @@ This example is taken from [`molecule/default/converge.yml`](https://github.com/
 
   pre_tasks:
     - name: Update apt cache.
-      apt: update_cache=true cache_valid_time=600
+      ansible.builtin.apt:
+        update_cache: "true"
+        cache_valid_time: "600"
       when: ansible_os_family == 'Debian'
 
     - name: Ensure test dependencies are installed (RedHat).
-      package: name=iproute state=present
+      ansible.builtin.package:
+        name: iproute
+        state: present
       when: ansible_os_family == 'RedHat'
 
     - name: Ensure test dependencies are installed (Debian).
-      package: name=iproute2 state=present
+      ansible.builtin.package:
+        name: iproute2
+        state: present
       when: ansible_os_family == 'Debian'
 
     - name: Gather facts.
-      action: setup
+      ansible.builtin.setup:
 
   roles:
     - role: buluma.kubernetes
 
   post_tasks:
     - name: Get cluster info.
-      command: kubectl cluster-info
+      ansible.builtin.command: kubectl cluster-info
       changed_when: false
       register: kubernetes_info
 
     - name: Print cluster info.
-      debug: var=kubernetes_info.stdout
-
+      ansible.builtin.debug:
+        var: kubernetes_info.stdout
     - name: Get all running pods.
-      command: kubectl get pods --all-namespaces
+      ansible.builtin.command: kubectl get pods --all-namespaces
       changed_when: false
       register: kubernetes_pods
 
     - name: Print list of running pods.
-      debug: var=kubernetes_pods.stdout
+      ansible.builtin.debug:
+        var: kubernetes_pods.stdout
 ```
 
 The machine needs to be prepared. In CI this is done using [`molecule/default/prepare.yml`](https://github.com/buluma/ansible-role-kubernetes/blob/master/molecule/default/prepare.yml):
 
 ```yaml
 ---
-- name: prepare
+- name: Prepare
   hosts: all
-  become: yes
-  gather_facts: no
+  become: true
+  gather_facts: false
 
   roles:
     - role: buluma.bootstrap

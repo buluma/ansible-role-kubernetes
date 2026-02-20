@@ -1,0 +1,3 @@
+ansible-role-kubernetes [generator]: ERROR: Unhandled exception when retrieving 'DEFAULT_LOCAL_TMP': [Errno 1] Operation not permitted: '/Users/shadowwalker/.ansible/tmp/ansible-local-85045rp2q4_7h'
+ansible-role-kubernetes [ansible-lint]: [35mtasks/sysctl-setup.yml[0m:2:1 [2mTask/Handler: Ensure procps is installed.[0m [0m [31m[34m]8;;https://docs.ansible.com/projects/lint/rules/name/\name[prefix]]8;;\[0m[2m:[0m [31mTask name should start with 'sysctl-setup | '.[0m [35mtasks/sysctl-setup.yml[0m:11:1 [2mTask/Handler: Let iptables see bridged traffic.[0m [0m 
+ansible-role-kubernetes [yamllint]: ./.ansible/roles/buluma.core_dependencies/.github/workflows/requirements2png.yml 1:1 error too many blank lines (1 > 0) (empty-lines) 

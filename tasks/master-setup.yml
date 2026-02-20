@@ -5,7 +5,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: "0755"
 
 - name: Deploy the config-file for kubeadm and kubelet
   ansible.builtin.template:
@@ -13,7 +13,7 @@
     dest: "{{ kubernetes_kubeadm_kubelet_config_file_path }}"
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Initialize Kubernetes master with kubeadm init
   ansible.builtin.command: >

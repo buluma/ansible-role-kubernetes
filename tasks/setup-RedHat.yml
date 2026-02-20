@@ -17,7 +17,8 @@
   with_items: "{{ kubernetes_yum_gpg_key }}"
 
 - name: Make cache if Kubernetes GPG key changed.
-  ansible.builtin.command: "yum -q makecache -y --disablerepo='*' --enablerepo='kubernetes'"
+  ansible.builtin.dnf:
+    enablerepo: "kubernetes"
+    disablerepo: "*"
+    state: present
   when: kubernetes_rpm_key is changed
-  args:
-    warn: false

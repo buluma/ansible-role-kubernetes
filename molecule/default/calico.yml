@@ -32,7 +32,7 @@
       when: ansible_os_family == 'Debian'
 
     - name: Gather facts.
-      action: setup
+      ansible.builtin.setup:
 
   roles:
     - role: buluma.docker

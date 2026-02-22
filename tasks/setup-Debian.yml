@@ -5,22 +5,19 @@
       - apt-transport-https
       - ca-certificates
     state: present
-
 - name: setup-Debian | Add Kubernetes apt key.
   ansible.builtin.apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
     state: present
-  register: add_repository_key
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
   ignore_errors: "{{ kubernetes_apt_ignore_key_error }}"
-
+  register: add_repository_key
 - name: setup-Debian | Add Kubernetes repository.
   ansible.builtin.apt_repository:
     repo: "{{ kubernetes_apt_repository }}"
     state: present
     update_cache: true
-
 - name: setup-Debian | Add Kubernetes apt preferences file to pin a version.
   ansible.builtin.template:
-    src: apt-preferences-kubernetes.j2
     dest: /etc/apt/preferences.d/kubernetes
     mode: "0644"
+    src: apt-preferences-kubernetes.j2

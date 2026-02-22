@@ -1,23 +1,9 @@
 ---
 dependencies: []
 galaxy_info:
-  role_name: kubernetes
   author: Michael Buluma
-  namespace: buluma
-  description: Kubernetes for Linux.
   company: ShadowNet
-  license: Apache-2.0
-  min_ansible_version: "2.1"
-  platforms:
-    - name: EL
-      versions:
-        - all
-    - name: Debian
-      versions:
-        - all
-    - name: Ubuntu
-      versions:
-        - all
+  description: Kubernetes for Linux.
   galaxy_tags:
     - system
     - containers
@@ -29,3 +15,17 @@ galaxy_info:
     - paas
     - saas
     - hosting
+  license: Apache-2.0
+  min_ansible_version: "2.1"
+  namespace: buluma
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  role_name: kubernetes

@@ -11,61 +11,64 @@ Kubernetes for Linux.
 This example is taken from [`molecule/default/converge.yml`](https://github.com/buluma/ansible-role-kubernetes/blob/master/molecule/default/converge.yml) and is tested on each push, pull request and release.
 
 ```yaml
-- become: true
-  hosts: all
-  name: Converge
-  post_tasks:
-  - ansible.builtin.command: kubectl cluster-info
-    changed_when: false
-    name: Get cluster info.
-    register: kubernetes_info
-  - ansible.builtin.debug:
-      var: kubernetes_info.stdout
-    name: Print cluster info.
-  - ansible.builtin.command: kubectl get pods --all-namespaces
-    changed_when: false
-    name: Get all running pods.
-    register: kubernetes_pods
-  - ansible.builtin.debug:
-      var: kubernetes_pods.stdout
-    name: Print list of running pods.
-  pre_tasks:
-  - ansible.builtin.apt:
-      cache_valid_time: '600'
-      update_cache: 'true'
-    name: Update apt cache.
-    when: ansible_os_family == 'Debian'
-  - ansible.builtin.package:
-      name: iproute
-      state: present
-    name: Ensure test dependencies are installed (RedHat).
-    when: ansible_os_family == 'RedHat'
-  - ansible.builtin.package:
-      name: iproute2
-      state: present
-    name: Ensure test dependencies are installed (Debian).
-    when: ansible_os_family == 'Debian'
-  - ansible.builtin.setup: null
-    name: Gather facts.
-  roles:
-  - role: buluma.kubernetes
-  vars:
-    docker_install_compose: false
-    kubernetes_kubelet_extra_args: --fail-swap-on=false --cgroup-driver=cgroupfs
+---
+  - become: true
+    hosts: all
+    name: Converge
+    post_tasks:
+      - ansible.builtin.command: kubectl cluster-info
+        changed_when: false
+        name: Get cluster info.
+        register: kubernetes_info
+      - ansible.builtin.debug:
+          var: kubernetes_info.stdout
+        name: Print cluster info.
+      - ansible.builtin.command: kubectl get pods --all-namespaces
+        changed_when: false
+        name: Get all running pods.
+        register: kubernetes_pods
+      - ansible.builtin.debug:
+          var: kubernetes_pods.stdout
+        name: Print list of running pods.
+    pre_tasks:
+      - ansible.builtin.apt:
+          cache_valid_time: '600'
+          update_cache: 'true'
+        name: Update apt cache.
+        when: ansible_os_family == 'Debian'
+      - ansible.builtin.package:
+          name: iproute
+          state: present
+        name: Ensure test dependencies are installed (RedHat).
+        when: ansible_os_family == 'RedHat'
+      - ansible.builtin.package:
+          name: iproute2
+          state: present
+        name: Ensure test dependencies are installed (Debian).
+        when: ansible_os_family == 'Debian'
+      - ansible.builtin.setup:
+        name: Gather facts.
+    roles:
+      - role: buluma.kubernetes
+    vars:
+      docker_install_compose: false
+      kubernetes_kubelet_extra_args: --fail-swap-on=false 
+        --cgroup-driver=cgroupfs
 ```
 
 The machine needs to be prepared. In CI this is done using [`molecule/default/prepare.yml`](https://github.com/buluma/ansible-role-kubernetes/blob/master/molecule/default/prepare.yml):
 
 ```yaml
-- become: true
-  gather_facts: false
-  hosts: all
-  name: Prepare
-  roles:
-  - role: buluma.bootstrap
-  - role: buluma.core_dependencies
-  - role: buluma.setuptools
-  - role: buluma.docker
+---
+  - become: true
+    gather_facts: false
+    hosts: all
+    name: Prepare
+    roles:
+      - role: buluma.bootstrap
+      - role: buluma.core_dependencies
+      - role: buluma.setuptools
+      - role: buluma.docker
 ```
 
 Also see a [full explanation and example](https://buluma.github.io/how-to-use-these-roles.html) on how to use these roles.
@@ -75,54 +78,60 @@ Also see a [full explanation and example](https://buluma.github.io/how-to-use-th
 The default values for the variables are set in [`defaults/main.yml`](https://github.com/buluma/ansible-role-kubernetes/blob/master/defaults/main.yml):
 
 ```yaml
+---
 kubernetes_allow_pods_on_master: true
-kubernetes_apiserver_advertise_address: ''
+kubernetes_apiserver_advertise_address: ""
 kubernetes_apt_ignore_key_error: false
 kubernetes_apt_release_channel: main
-kubernetes_apt_repository: deb http://apt.kubernetes.io/ kubernetes-xenial {{ kubernetes_apt_release_channel
-  }}
-kubernetes_calico_manifest_file: https://projectcalico.docs.tigera.io/manifests/calico.yaml
+kubernetes_apt_repository: deb http://apt.kubernetes.io/ kubernetes-xenial {{ 
+  kubernetes_apt_release_channel }}
+kubernetes_calico_manifest_file: 
+  https://projectcalico.docs.tigera.io/manifests/calico.yaml
 kubernetes_config_cluster_configuration:
-  kubernetesVersion: '{{ kubernetes_version_kubeadm }}'
+  kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
   networking:
-    podSubnet: '{{ kubernetes_pod_network.cidr }}'
+    podSubnet: "{{ kubernetes_pod_network.cidr }}"
 kubernetes_config_init_configuration:
   localAPIEndpoint:
-    advertiseAddress: '{{ kubernetes_apiserver_advertise_address | default(ansible_default_ipv4.address,
-      true) }}'
+    advertiseAddress: "{{ kubernetes_apiserver_advertise_address | default(ansible_default_ipv4.address,
+      true) }}"
 kubernetes_config_kube_proxy_configuration: {}
 kubernetes_config_kubelet_configuration:
   cgroupDriver: cgroupfs
-kubernetes_flannel_manifest_file: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-kubernetes_flannel_manifest_file_rbac: https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+kubernetes_flannel_manifest_file: 
+  https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+kubernetes_flannel_manifest_file_rbac: 
+  https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
 kubernetes_ignore_preflight_errors: all
-kubernetes_join_command_extra_opts: ''
-kubernetes_kubeadm_init_extra_opts: ''
-kubernetes_kubeadm_kubelet_config_file_path: /etc/kubernetes/kubeadm-kubelet-config.yaml
-kubernetes_kubelet_extra_args: ''
+kubernetes_join_command_extra_opts: ""
+kubernetes_kubeadm_init_extra_opts: ""
+kubernetes_kubeadm_kubelet_config_file_path: 
+  /etc/kubernetes/kubeadm-kubelet-config.yaml
+kubernetes_kubelet_extra_args: ""
 kubernetes_packages:
-- name: kubelet
-  state: present
-- name: kubectl
-  state: present
-- name: kubeadm
-  state: present
-- name: kubernetes-cni
-  state: present
+  - name: kubelet
+    state: present
+  - name: kubectl
+    state: present
+  - name: kubeadm
+    state: present
+  - name: kubernetes-cni
+    state: present
 kubernetes_pod_network:
   cidr: 10.244.0.0/16
   cni: flannel
 kubernetes_role: master
-kubernetes_version: '1.20'
+kubernetes_version: "1.20"
 kubernetes_version_kubeadm: stable-{{ kubernetes_version }}
 kubernetes_version_rhel_package: 1.20.4
 kubernetes_yum_arch: $basearch
-kubernetes_yum_base_url: https://packages.cloud.google.com/yum/repos/kubernetes-el7-{{
+kubernetes_yum_base_url: 
+  https://packages.cloud.google.com/yum/repos/kubernetes-el7-{{ 
   kubernetes_yum_arch }}
 kubernetes_yum_gpg_check: true
 kubernetes_yum_gpg_key:
-- https://packages.cloud.google.com/yum/doc/yum-key.gpg
-- https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+  - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 kubernetes_yum_repo_gpg_check: true
 ```
 

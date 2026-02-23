@@ -1,41 +1,43 @@
-- become: true
-  hosts: all
-  name: Converge
-  post_tasks:
-  - ansible.builtin.command: kubectl cluster-info
-    changed_when: false
-    name: Get cluster info.
-    register: kubernetes_info
-  - ansible.builtin.debug:
-      var: kubernetes_info.stdout
-    name: Print cluster info.
-  - ansible.builtin.command: kubectl get pods --all-namespaces
-    changed_when: false
-    name: Get all running pods.
-    register: kubernetes_pods
-  - ansible.builtin.debug:
-      var: kubernetes_pods.stdout
-    name: Print list of running pods.
-  pre_tasks:
-  - ansible.builtin.apt:
-      cache_valid_time: '600'
-      update_cache: 'true'
-    name: Update apt cache.
-    when: ansible_os_family == 'Debian'
-  - ansible.builtin.package:
-      name: iproute
-      state: present
-    name: Ensure test dependencies are installed (RedHat).
-    when: ansible_os_family == 'RedHat'
-  - ansible.builtin.package:
-      name: iproute2
-      state: present
-    name: Ensure test dependencies are installed (Debian).
-    when: ansible_os_family == 'Debian'
-  - ansible.builtin.setup: null
-    name: Gather facts.
-  roles:
-  - role: buluma.kubernetes
-  vars:
-    docker_install_compose: false
-    kubernetes_kubelet_extra_args: --fail-swap-on=false --cgroup-driver=cgroupfs
+---
+  - become: true
+    hosts: all
+    name: Converge
+    post_tasks:
+      - ansible.builtin.command: kubectl cluster-info
+        changed_when: false
+        name: Get cluster info.
+        register: kubernetes_info
+      - ansible.builtin.debug:
+          var: kubernetes_info.stdout
+        name: Print cluster info.
+      - ansible.builtin.command: kubectl get pods --all-namespaces
+        changed_when: false
+        name: Get all running pods.
+        register: kubernetes_pods
+      - ansible.builtin.debug:
+          var: kubernetes_pods.stdout
+        name: Print list of running pods.
+    pre_tasks:
+      - ansible.builtin.apt:
+          cache_valid_time: '600'
+          update_cache: 'true'
+        name: Update apt cache.
+        when: ansible_os_family == 'Debian'
+      - ansible.builtin.package:
+          name: iproute
+          state: present
+        name: Ensure test dependencies are installed (RedHat).
+        when: ansible_os_family == 'RedHat'
+      - ansible.builtin.package:
+          name: iproute2
+          state: present
+        name: Ensure test dependencies are installed (Debian).
+        when: ansible_os_family == 'Debian'
+      - ansible.builtin.setup:
+        name: Gather facts.
+    roles:
+      - role: buluma.kubernetes
+    vars:
+      docker_install_compose: false
+      kubernetes_kubelet_extra_args: --fail-swap-on=false 
+        --cgroup-driver=cgroupfs

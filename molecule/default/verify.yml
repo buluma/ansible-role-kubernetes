@@ -1,7 +1,8 @@
-- become: true
-  gather_facts: true
-  hosts: all
-  name: Verify
-  tasks:
-  - ansible.builtin.ping: null
-    name: Example from an Ansible Playbook
+---
+  - become: true
+    gather_facts: true
+    hosts: all
+    name: Verify
+    tasks:
+      - ansible.builtin.ping:
+        name: Example from an Ansible Playbook

@@ -1,16 +1,16 @@
 ---
 categories:
-  - labels:
-      - feature
-      - enhancement
-    title: 🚀 Features
-  - labels:
-      - fix
-      - bugfix
-      - bug
-    title: 🐛 Bug Fixes
-  - label: chore
-    title: 🧰 Maintenance
+- labels:
+  - feature
+  - enhancement
+  title: 🚀 Features
+- labels:
+  - fix
+  - bugfix
+  - bug
+  title: 🐛 Bug Fixes
+- label: chore
+  title: 🧰 Maintenance
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: \<*_&
 name-template: v$RESOLVED_VERSION 🌈
@@ -25,10 +25,10 @@ version-resolver:
   default: patch
   major:
     labels:
-      - major
+    - major
   minor:
     labels:
-      - minor
+    - minor
   patch:
     labels:
-      - patch
+    - patch

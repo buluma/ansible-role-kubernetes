@@ -1,8 +1,8 @@
 ---
 collections:
-  - name: ansible.posix
+- name: ansible.posix
 roles:
-  - name: buluma.bootstrap
-  - name: buluma.docker
-  - name: buluma.setuptools
-  - name: buluma.core_dependencies
+- name: buluma.bootstrap
+- name: buluma.docker
+- name: buluma.setuptools
+- name: buluma.core_dependencies

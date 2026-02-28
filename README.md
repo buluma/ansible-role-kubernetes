@@ -82,9 +82,9 @@ kubernetes_allow_pods_on_master: true
 kubernetes_apiserver_advertise_address: ""
 kubernetes_apt_ignore_key_error: false
 kubernetes_apt_release_channel: main
-kubernetes_apt_repository: deb http://apt.kubernetes.io/ kubernetes-xenial {{ 
+kubernetes_apt_repository: deb http://apt.kubernetes.io/ kubernetes-xenial {{
   kubernetes_apt_release_channel }}
-kubernetes_calico_manifest_file: 
+kubernetes_calico_manifest_file:
   https://projectcalico.docs.tigera.io/manifests/calico.yaml
 kubernetes_config_cluster_configuration:
   kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
@@ -97,14 +97,14 @@ kubernetes_config_init_configuration:
 kubernetes_config_kube_proxy_configuration: {}
 kubernetes_config_kubelet_configuration:
   cgroupDriver: cgroupfs
-kubernetes_flannel_manifest_file: 
+kubernetes_flannel_manifest_file:
   https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-kubernetes_flannel_manifest_file_rbac: 
+kubernetes_flannel_manifest_file_rbac:
   https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
 kubernetes_ignore_preflight_errors: all
 kubernetes_join_command_extra_opts: ""
 kubernetes_kubeadm_init_extra_opts: ""
-kubernetes_kubeadm_kubelet_config_file_path: 
+kubernetes_kubeadm_kubelet_config_file_path:
   /etc/kubernetes/kubeadm-kubelet-config.yaml
 kubernetes_kubelet_extra_args: ""
 kubernetes_packages:
@@ -124,8 +124,8 @@ kubernetes_version: "1.20"
 kubernetes_version_kubeadm: stable-{{ kubernetes_version }}
 kubernetes_version_rhel_package: 1.20.4
 kubernetes_yum_arch: $basearch
-kubernetes_yum_base_url: 
-  https://packages.cloud.google.com/yum/repos/kubernetes-el7-{{ 
+kubernetes_yum_base_url:
+  https://packages.cloud.google.com/yum/repos/kubernetes-el7-{{
   kubernetes_yum_arch }}
 kubernetes_yum_gpg_check: true
 kubernetes_yum_gpg_key:
@@ -181,4 +181,3 @@ If you find issues, please register them on [GitHub](https://github.com/buluma/a
 ## [Author Information](#author-information)
 
 [Michael Buluma](https://buluma.github.io/)
-

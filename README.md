@@ -2,9 +2,9 @@
 
 Kubernetes for Linux.
 
-|GitHub|GitLab|Downloads|Version|
-|------|------|---------|-------|
-|[![github](https://github.com/buluma/ansible-role-kubernetes/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-kubernetes/actions)|[![gitlab](https://gitlab.com/shadowwalker/ansible-role-kubernetes/badges/master/pipeline.svg)](https://gitlab.com/shadowwalker/ansible-role-kubernetes)|[![downloads](https://img.shields.io/ansible/role/d/buluma/kubernetes)](https://galaxy.ansible.com/buluma/kubernetes)|[![Version](https://img.shields.io/github/release/buluma/ansible-role-kubernetes.svg)](https://github.com/buluma/ansible-role-kubernetes/releases/)|
+|GitHub|Issues|Pull Requests|Version|Downloads|
+|------|------|-------------|-------|---------|
+|[![github](https://github.com/buluma/ansible-role-kubernetes/actions/workflows/molecule.yml/badge.svg)](https://github.com/buluma/ansible-role-kubernetes/actions/workflows/molecule.yml)|[![Issues](https://img.shields.io/github/issues/buluma/ansible-role-kubernetes.svg)](https://github.com/buluma/ansible-role-kubernetes/issues/)|[![PullRequests](https://img.shields.io/github/issues-pr-closed-raw/buluma/ansible-role-kubernetes.svg)](https://github.com/buluma/ansible-role-kubernetes/pulls/)|[![Version](https://img.shields.io/github/release/buluma/ansible-role-kubernetes.svg)](https://github.com/buluma/ansible-role-kubernetes/releases/)|[![Ansible Role](https://img.shields.io/ansible/role/d/buluma/kubernetes)](https://galaxy.ansible.com/ui/standalone/roles/buluma/kubernetes/documentation)|
 
 ## [Example Playbook](#example-playbook)
 
@@ -16,40 +16,40 @@ This example is taken from [`molecule/default/converge.yml`](https://github.com/
   hosts: all
   name: Converge
   post_tasks:
-  - ansible.builtin.command: kubectl cluster-info
-    changed_when: false
-    name: Get cluster info.
-    register: kubernetes_info
-  - ansible.builtin.debug:
-      var: kubernetes_info.stdout
-    name: Print cluster info.
-  - ansible.builtin.command: kubectl get pods --all-namespaces
-    changed_when: false
-    name: Get all running pods.
-    register: kubernetes_pods
-  - ansible.builtin.debug:
-      var: kubernetes_pods.stdout
-    name: Print list of running pods.
+    - ansible.builtin.command: kubectl cluster-info
+      changed_when: false
+      name: Get cluster info.
+      register: kubernetes_info
+    - ansible.builtin.debug:
+        var: kubernetes_info.stdout
+      name: Print cluster info.
+    - ansible.builtin.command: kubectl get pods --all-namespaces
+      changed_when: false
+      name: Get all running pods.
+      register: kubernetes_pods
+    - ansible.builtin.debug:
+        var: kubernetes_pods.stdout
+      name: Print list of running pods.
   pre_tasks:
-  - ansible.builtin.apt:
-      cache_valid_time: '600'
-      update_cache: 'true'
-    name: Update apt cache.
-    when: ansible_os_family == 'Debian'
-  - ansible.builtin.package:
-      name: iproute
-      state: present
-    name: Ensure test dependencies are installed (RedHat).
-    when: ansible_os_family == 'RedHat'
-  - ansible.builtin.package:
-      name: iproute2
-      state: present
-    name: Ensure test dependencies are installed (Debian).
-    when: ansible_os_family == 'Debian'
-  - ansible.builtin.setup:
-    name: Gather facts.
+    - ansible.builtin.apt:
+        cache_valid_time: "600"
+        update_cache: "true"
+      name: Update apt cache.
+      when: ansible_os_family == 'Debian'
+    - ansible.builtin.package:
+        name: iproute
+        state: present
+      name: Ensure test dependencies are installed (RedHat).
+      when: ansible_os_family == 'RedHat'
+    - ansible.builtin.package:
+        name: iproute2
+        state: present
+      name: Ensure test dependencies are installed (Debian).
+      when: ansible_os_family == 'Debian'
+    - ansible.builtin.setup:
+      name: Gather facts.
   roles:
-  - role: buluma.kubernetes
+    - role: buluma.kubernetes
   vars:
     docker_install_compose: false
     kubernetes_kubelet_extra_args: --fail-swap-on=false --cgroup-driver=cgroupfs
@@ -64,10 +64,10 @@ The machine needs to be prepared. In CI this is done using [`molecule/default/pr
   hosts: all
   name: Prepare
   roles:
-  - role: buluma.bootstrap
-  - role: buluma.core_dependencies
-  - role: buluma.setuptools
-  - role: buluma.docker
+    - role: buluma.bootstrap
+    - role: buluma.core_dependencies
+    - role: buluma.setuptools
+    - role: buluma.docker
 ```
 
 Also see a [full explanation and example](https://buluma.github.io/how-to-use-these-roles.html) on how to use these roles.
@@ -134,29 +134,30 @@ kubernetes_yum_repo_gpg_check: true
 
 The following roles are used to prepare a system. You can prepare your system in another way.
 
-| Requirement | GitHub | GitLab |
-|-------------|--------|--------|
-|[buluma.bootstrap](https://galaxy.ansible.com/buluma/bootstrap)|[![Build Status GitHub](https://github.com/buluma/ansible-role-bootstrap/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-bootstrap/actions)|[![Build Status GitLab](https://gitlab.com/shadowwalker/ansible-role-bootstrap/badges/master/pipeline.svg)](https://gitlab.com/shadowwalker/ansible-role-bootstrap)|
-|[buluma.docker](https://galaxy.ansible.com/buluma/docker)|[![Build Status GitHub](https://github.com/buluma/ansible-role-docker/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-docker/actions)|[![Build Status GitLab](https://gitlab.com/shadowwalker/ansible-role-docker/badges/master/pipeline.svg)](https://gitlab.com/shadowwalker/ansible-role-docker)|
-|[buluma.setuptools](https://galaxy.ansible.com/buluma/setuptools)|[![Build Status GitHub](https://github.com/buluma/ansible-role-setuptools/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-setuptools/actions)|[![Build Status GitLab](https://gitlab.com/shadowwalker/ansible-role-setuptools/badges/master/pipeline.svg)](https://gitlab.com/shadowwalker/ansible-role-setuptools)|
-|[buluma.core_dependencies](https://galaxy.ansible.com/buluma/core_dependencies)|[![Build Status GitHub](https://github.com/buluma/ansible-role-core_dependencies/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-core_dependencies/actions)|[![Build Status GitLab](https://gitlab.com/shadowwalker/ansible-role-core_dependencies/badges/master/pipeline.svg)](https://gitlab.com/shadowwalker/ansible-role-core_dependencies)|
+| Requirement | GitHub |
+|-------------|--------|
+|[buluma.bootstrap](https://galaxy.ansible.com/buluma/bootstrap)|[![Build Status GitHub](https://github.com/buluma/ansible-role-bootstrap/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-bootstrap/actions)|
+|[buluma.docker](https://galaxy.ansible.com/buluma/docker)|[![Build Status GitHub](https://github.com/buluma/ansible-role-docker/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-docker/actions)|
+|[buluma.setuptools](https://galaxy.ansible.com/buluma/setuptools)|[![Build Status GitHub](https://github.com/buluma/ansible-role-setuptools/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-setuptools/actions)|
+|[buluma.core_dependencies](https://galaxy.ansible.com/buluma/core_dependencies)|[![Build Status GitHub](https://github.com/buluma/ansible-role-core_dependencies/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-core_dependencies/actions)|
 
 ## [Context](#context)
 
 This role is part of many compatible roles. Have a look at [the documentation of these roles](https://buluma.github.io/) for further information.
 
 Here is an overview of related roles:
+
 ![dependencies](https://raw.githubusercontent.com/buluma/ansible-role-kubernetes/png/requirements.png "Dependencies")
 
 ## [Compatibility](#compatibility)
 
-This role has been tested on these [container images](https://hub.docker.com/u/buluma):
+This role has been tested on these [container images](https://hub.docker.com/u/robertdebock):
 
 |container|tags|
 |---------|----|
-|[EL](https://hub.docker.com/r/buluma/enterpriselinux)|all|
-|[Debian](https://hub.docker.com/r/buluma/debian)|all|
-|[Ubuntu](https://hub.docker.com/r/buluma/ubuntu)|all|
+|[EL](https://hub.docker.com/r/robertdebock/enterpriselinux)|all|
+|[Debian](https://hub.docker.com/r/robertdebock/debian)|all|
+|[Ubuntu](https://hub.docker.com/r/robertdebock/ubuntu)|all|
 
 The minimum version of Ansible required is 2.1, tests have been done on:
 
@@ -173,3 +174,4 @@ If you find issues, please register them on [GitHub](https://github.com/buluma/a
 ## [Author Information](#author-information)
 
 [Michael Buluma](https://buluma.github.io/)
+

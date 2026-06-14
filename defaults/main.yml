@@ -11,7 +11,7 @@ kubernetes_config_cluster_configuration:
     podSubnet: "{{ kubernetes_pod_network.cidr }}"
 kubernetes_config_init_configuration:
   localAPIEndpoint:
-    advertiseAddress: "{{ kubernetes_apiserver_advertise_address | default(ansible_default_ipv4.address, true) }}"
+    advertiseAddress: "{{ kubernetes_apiserver_advertise_address | default(ansible_facts['default_ipv4'].address, true) }}"
 kubernetes_config_kube_proxy_configuration: {}
 kubernetes_config_kubelet_configuration:
   cgroupDriver: cgroupfs

@@ -6,9 +6,10 @@
       - ca-certificates
     state: present
 - name: setup-Debian | Add Kubernetes apt key.
-  ansible.builtin.apt_key:
-    state: present
+  ansible.builtin.get_url:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    dest: /etc/apt/trusted.gpg.d/kubernetes.asc
+    mode: "0644"
   ignore_errors: "{{ kubernetes_apt_ignore_key_error }}"
   register: add_repository_key
 - name: setup-Debian | Add Kubernetes repository.

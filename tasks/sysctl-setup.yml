@@ -3,7 +3,7 @@
   ansible.builtin.package:
     name: "{{ procps_package }}"
     state: present
-  when: "ansible_distribution != 'Debian' or ansible_distribution_major_version | int < 10\n"
+  when: "ansible_facts.distribution != 'Debian' or ansible_facts.distribution_major_version | int < 10\n"
 - name: sysctl-setup | Let iptables see bridged traffic.
   ansible.posix.sysctl:
     name: "{{ item }}"
@@ -12,4 +12,4 @@
   loop:
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
-  when: "ansible_distribution != 'Debian' or ansible_distribution_major_version | int < 10\n"
+  when: "ansible_facts.distribution != 'Debian' or ansible_facts.distribution_major_version | int < 10\n"

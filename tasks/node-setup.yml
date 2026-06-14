@@ -1,5 +1,5 @@
 ---
-- name: join node to Kubernetes master
-  shell: "{{ kubernetes_join_command }} creates=/etc/kubernetes/kubelet.conf\n"
-  tags:
-    - skip_ansible_lint
+- name: Join node to Kubernetes master
+  ansible.builtin.shell:
+    cmd: "{{ kubernetes_join_command }}"
+    creates: /etc/kubernetes/kubelet.conf

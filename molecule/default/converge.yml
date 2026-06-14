@@ -1,8 +1,7 @@
 ---
-- become: true
 - name: Converge
   hosts: all
-  name: Converge
+  become: true
   post_tasks:
     - ansible.builtin.command: kubectl cluster-info
       changed_when: false

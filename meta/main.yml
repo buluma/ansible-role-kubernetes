@@ -28,4 +28,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - all
+    - name: Fedora
+      versions:
+        - all
   role_name: kubernetes

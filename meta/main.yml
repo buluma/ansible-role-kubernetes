@@ -18,17 +18,4 @@ galaxy_info:
   license: Apache-2.0
   min_ansible_version: "2.12"
   namespace: buluma
-  platforms:
-    - name: EL
-      versions:
-        - all
-    - name: Debian
-      versions:
-        - all
-    - name: Ubuntu
-      versions:
-        - all
-    - name: Fedora
-      versions:
-        - all
   role_name: kubernetes

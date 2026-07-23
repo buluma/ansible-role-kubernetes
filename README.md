@@ -111,8 +111,9 @@ The default values for the variables are set in [`defaults/main.yml`](https://gi
 kubernetes_allow_pods_on_master: true
 kubernetes_apiserver_advertise_address: ""
 kubernetes_apt_ignore_key_error: false
-kubernetes_apt_release_channel: main
-kubernetes_apt_repository: "deb http://apt.kubernetes.io/ kubernetes-xenial {{ kubernetes_apt_release_channel }}"
+kubernetes_apt_keyring_path: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+kubernetes_apt_key_url: "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/Release.key"
+kubernetes_apt_repository: "deb [signed-by={{ kubernetes_apt_keyring_path }}] https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/ /"
 kubernetes_calico_manifest_file: "https://projectcalico.docs.tigera.io/manifests/calico.yaml"
 kubernetes_config_cluster_configuration:
   kubernetesVersion: "{{ kubernetes_version_kubeadm }}"
@@ -144,15 +145,12 @@ kubernetes_pod_network:
   cidr: 10.244.0.0/16
   cni: flannel
 kubernetes_role: master
-kubernetes_version: "1.20"
+kubernetes_version: "1.36"
 kubernetes_version_kubeadm: stable-{{ kubernetes_version }}
-kubernetes_version_rhel_package: "1.20.4"
-kubernetes_yum_arch: $basearch
-kubernetes_yum_base_url: "https://packages.cloud.google.com/yum/repos/kubernetes-el7-{{ kubernetes_yum_arch }}"
+kubernetes_yum_base_url: "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/rpm/"
 kubernetes_yum_gpg_check: true
 kubernetes_yum_gpg_key:
-  - https://packages.cloud.google.com/yum/doc/yum-key.gpg
-  - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  - "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/rpm/repodata/repomd.xml.key"
 kubernetes_yum_repo_gpg_check: true
 ```
 

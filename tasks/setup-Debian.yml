@@ -4,14 +4,25 @@
     name:
       - apt-transport-https
       - ca-certificates
+      - gnupg
     state: present
-- name: setup-Debian | Add Kubernetes apt key.
+- name: setup-Debian | Ensure the apt keyrings directory exists.
+  ansible.builtin.file:
+    path: "{{ kubernetes_apt_keyring_path | dirname }}"
+    state: directory
+    mode: "0755"
+- name: setup-Debian | Download Kubernetes apt key.
   ansible.builtin.get_url:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    dest: /etc/apt/trusted.gpg.d/kubernetes.asc
+    url: "{{ kubernetes_apt_key_url }}"
+    dest: /tmp/kubernetes-release.key
     mode: "0644"
   ignore_errors: "{{ kubernetes_apt_ignore_key_error }}"
   register: add_repository_key
+- name: setup-Debian | Dearmor Kubernetes apt key.
+  ansible.builtin.command:
+    cmd: "gpg --batch --yes --dearmor -o {{ kubernetes_apt_keyring_path }} /tmp/kubernetes-release.key"
+    creates: "{{ kubernetes_apt_keyring_path }}"
+  when: add_repository_key is not failed
 - name: setup-Debian | Add Kubernetes repository.
   ansible.builtin.apt_repository:
     repo: "{{ kubernetes_apt_repository }}"

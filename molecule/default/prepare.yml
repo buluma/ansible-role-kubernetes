@@ -38,3 +38,9 @@
     - role: buluma.core_dependencies
     - role: buluma.setuptools
     - role: buluma.docker
+      # ansible-role-docker has no repository-setup logic and never
+      # carried a working package on RHEL-family (see its own
+      # meta/preferences.yml); docker_ce handles that case instead.
+      when: ansible_facts['os_family'] != 'RedHat'
+    - role: buluma.docker_ce
+      when: ansible_facts['os_family'] == 'RedHat'

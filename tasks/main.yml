@@ -35,15 +35,16 @@
     owner: root
     path: /etc/containerd
     state: directory
-- name: Check if a containerd config already exists.
-  ansible.builtin.stat:
-    path: /etc/containerd/config.toml
-  register: kubernetes_containerd_config_stat
+- name: Check if containerd has already been configured for kubelet.
+  ansible.builtin.command: grep -qF "SystemdCgroup = true" /etc/containerd/config.toml
+  register: kubernetes_containerd_configured
+  changed_when: false
+  failed_when: false
 - name: Generate default containerd config with the CRI plugin enabled.
   ansible.builtin.command: containerd config default
   register: kubernetes_containerd_default_config
   changed_when: false
-  when: not kubernetes_containerd_config_stat.stat.exists
+  when: kubernetes_containerd_configured.rc != 0
 - name: Deploy containerd config.
   ansible.builtin.copy:
     content: "{{ kubernetes_containerd_default_config.stdout }}"
@@ -51,7 +52,7 @@
     group: root
     mode: "0644"
     owner: root
-  when: not kubernetes_containerd_config_stat.stat.exists
+  when: kubernetes_containerd_configured.rc != 0
   notify: Restart containerd
 - name: Enable the systemd cgroup driver in containerd.
   ansible.builtin.replace:

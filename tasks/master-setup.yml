@@ -27,6 +27,14 @@
       register: kubeadmin_init
       when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is defined)
   rescue:
+    - name: master-setup | DEBUG crictl pods -a
+      ansible.builtin.command: crictl -r unix:///var/run/containerd/containerd.sock pods -a
+      changed_when: false
+      failed_when: false
+      register: kubernetes_debug_crictl_pods
+    - name: master-setup | DEBUG print crictl pods -a
+      ansible.builtin.debug:
+        var: kubernetes_debug_crictl_pods.stdout_lines
     - name: master-setup | DEBUG crictl ps -a
       ansible.builtin.command: crictl -r unix:///var/run/containerd/containerd.sock ps -a
       changed_when: false
@@ -48,14 +56,30 @@
     - name: master-setup | DEBUG print crictl logs
       ansible.builtin.debug:
         var: kubernetes_debug_crictl_logs.stdout_lines
-    - name: master-setup | DEBUG journalctl for kubelet
-      ansible.builtin.command: journalctl -u kubelet --no-pager -n 200
+    - name: master-setup | DEBUG ls static pod manifests
+      ansible.builtin.command: ls -la /etc/kubernetes/manifests
+      changed_when: false
+      failed_when: false
+      register: kubernetes_debug_manifests_ls
+    - name: master-setup | DEBUG print static pod manifests listing
+      ansible.builtin.debug:
+        var: kubernetes_debug_manifests_ls.stdout_lines
+    - name: master-setup | DEBUG containerd journal
+      ansible.builtin.command: journalctl -u containerd --no-pager -n 100
+      changed_when: false
+      failed_when: false
+      register: kubernetes_debug_containerd_journal
+    - name: master-setup | DEBUG print containerd journal
+      ansible.builtin.debug:
+        var: kubernetes_debug_containerd_journal.stdout_lines
+    - name: master-setup | DEBUG full kubelet journal since kubelet started
+      ansible.builtin.command: journalctl -u kubelet --no-pager
       changed_when: false
       failed_when: false
       register: kubernetes_debug_kubelet_journal
-    - name: master-setup | DEBUG print kubelet journal
+    - name: master-setup | DEBUG print kubelet journal lines that are not the repeated mirror-pod-registration spam
       ansible.builtin.debug:
-        var: kubernetes_debug_kubelet_journal.stdout_lines
+        msg: "{{ kubernetes_debug_kubelet_journal.stdout_lines | reject('search', 'kubelet.go:3516') | list }}"
     - name: master-setup | DEBUG re-raise the original kubeadm init failure
       ansible.builtin.fail:
         msg: "kubeadm init failed: {{ kubeadmin_init.stderr | default('see debug output above') }}"

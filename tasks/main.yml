@@ -8,16 +8,15 @@
   ansible.builtin.include_tasks: setup-Debian.yml
   when: ansible_facts['os_family'] == 'Debian'
 - name: Check if curl is available
-  ansible.builtin.shell: command -v curl
+  ansible.builtin.stat:
+    path: /usr/bin/curl
   register: kubernetes_curl_check
-  changed_when: false
-  failed_when: false
 - name: Ensure dependencies are installed.
   ansible.builtin.package:
     name: curl
     state: present
   when:
-    - kubernetes_curl_check.rc != 0
+    - not kubernetes_curl_check.stat.exists
 - name: Install Kubernetes packages.
   ansible.builtin.package:
     name: "{{ item.name | default(item) }}"

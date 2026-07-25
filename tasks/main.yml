@@ -28,6 +28,31 @@
 - name: Setup Kubelet
   ansible.builtin.include_tasks: kubelet-setup.yml
   when: kubernetes_kubelet_extra_args|length > 0
+- name: Generate default containerd config with the CRI plugin enabled.
+  ansible.builtin.command: containerd config default
+  register: kubernetes_containerd_default_config
+  changed_when: false
+- name: Deploy containerd config.
+  ansible.builtin.copy:
+    content: "{{ kubernetes_containerd_default_config.stdout }}"
+    dest: /etc/containerd/config.toml
+    group: root
+    mode: "0644"
+    owner: root
+  notify: Restart containerd
+- name: Enable the systemd cgroup driver in containerd.
+  ansible.builtin.replace:
+    path: /etc/containerd/config.toml
+    regexp: "SystemdCgroup = false"
+    replace: "SystemdCgroup = true"
+  notify: Restart containerd
+- name: Ensure containerd is started and enabled at boot.
+  ansible.builtin.service:
+    enabled: true
+    name: containerd
+    state: started
+- name: Flush handlers so containerd is running before kubeadm init.
+  ansible.builtin.meta: flush_handlers
 - name: Ensure kubelet is started and enabled at boot.
   ansible.builtin.service:
     enabled: true

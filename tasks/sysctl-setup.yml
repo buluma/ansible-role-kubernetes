@@ -4,6 +4,10 @@
     name: "{{ procps_package }}"
     state: present
   when: "ansible_facts['distribution'] != 'Debian' or ansible_facts['distribution_major_version'] | int < 10\n"
+- name: sysctl-setup | Ensure kmod is installed (provides modprobe).
+  ansible.builtin.package:
+    name: kmod
+    state: present
 - name: sysctl-setup | Load the overlay and br_netfilter kernel modules.
   community.general.modprobe:
     name: "{{ item }}"

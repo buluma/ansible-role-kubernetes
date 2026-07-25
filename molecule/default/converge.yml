@@ -39,4 +39,5 @@
     - role: buluma.kubernetes
   vars:
     docker_install_compose: false
+    kubernetes_containerd_snapshotter: native
     kubernetes_kubelet_extra_args: --fail-swap-on=false

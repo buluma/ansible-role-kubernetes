@@ -94,8 +94,15 @@
   with_items:
     - kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}
 - name: master-setup | Allow pods on master node (if configured).
-  ansible.builtin.command: kubectl taint nodes --all node-role.kubernetes.io/master-
-  changed_when: false
+  ansible.builtin.command: "kubectl taint nodes --all {{ item }}-"
+  register: kubernetes_master_taint_removal
+  changed_when: "'untainted' in kubernetes_master_taint_removal.stdout"
+  failed_when:
+    - kubernetes_master_taint_removal.rc != 0
+    - "'not found' not in kubernetes_master_taint_removal.stderr"
+  loop:
+    - node-role.kubernetes.io/control-plane
+    - node-role.kubernetes.io/master
   when:
     - kubernetes_allow_pods_on_master | bool
     - not kubernetes_init_stat.stat.exists

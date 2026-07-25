@@ -60,6 +60,16 @@
     replace: 'snapshotter = "{{ kubernetes_containerd_snapshotter }}"'
   when: kubernetes_containerd_snapshotter is defined
   notify: Restart containerd
+- name: Register the overridden snapshotter for image unpacking.
+  ansible.builtin.blockinfile:
+    path: /etc/containerd/config.toml
+    block: |
+      [plugins."io.containerd.transfer.v1.local"]
+        [[plugins."io.containerd.transfer.v1.local".unpack_config]]
+          platform = "linux/{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] | default(ansible_facts['architecture'], true) }}"
+          snapshotter = "{{ kubernetes_containerd_snapshotter }}"
+  when: kubernetes_containerd_snapshotter is defined
+  notify: Restart containerd
 - name: Ensure containerd is started and enabled at boot.
   ansible.builtin.service:
     enabled: true

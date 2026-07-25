@@ -32,6 +32,13 @@
   ansible.builtin.command: containerd config default
   register: kubernetes_containerd_default_config
   changed_when: false
+- name: Ensure /etc/containerd exists.
+  ansible.builtin.file:
+    group: root
+    mode: "0755"
+    owner: root
+    path: /etc/containerd
+    state: directory
 - name: Deploy containerd config.
   ansible.builtin.copy:
     content: "{{ kubernetes_containerd_default_config.stdout }}"

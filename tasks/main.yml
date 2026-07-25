@@ -8,7 +8,7 @@
   ansible.builtin.include_tasks: setup-Debian.yml
   when: ansible_facts['os_family'] == 'Debian'
 - name: Check if curl is available
-  ansible.builtin.command: which curl
+  ansible.builtin.shell: command -v curl
   register: kubernetes_curl_check
   changed_when: false
   failed_when: false

@@ -39,4 +39,4 @@
     - role: buluma.kubernetes
   vars:
     docker_install_compose: false
-    kubernetes_kubelet_extra_args: --fail-swap-on=false --cgroup-driver=cgroupfs
+    kubernetes_kubelet_extra_args: --fail-swap-on=false

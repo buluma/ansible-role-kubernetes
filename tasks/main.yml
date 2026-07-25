@@ -28,10 +28,6 @@
 - name: Setup Kubelet
   ansible.builtin.include_tasks: kubelet-setup.yml
   when: kubernetes_kubelet_extra_args|length > 0
-- name: Generate default containerd config with the CRI plugin enabled.
-  ansible.builtin.command: containerd config default
-  register: kubernetes_containerd_default_config
-  changed_when: false
 - name: Ensure /etc/containerd exists.
   ansible.builtin.file:
     group: root
@@ -39,6 +35,15 @@
     owner: root
     path: /etc/containerd
     state: directory
+- name: Check if a containerd config already exists.
+  ansible.builtin.stat:
+    path: /etc/containerd/config.toml
+  register: kubernetes_containerd_config_stat
+- name: Generate default containerd config with the CRI plugin enabled.
+  ansible.builtin.command: containerd config default
+  register: kubernetes_containerd_default_config
+  changed_when: false
+  when: not kubernetes_containerd_config_stat.stat.exists
 - name: Deploy containerd config.
   ansible.builtin.copy:
     content: "{{ kubernetes_containerd_default_config.stdout }}"
@@ -46,6 +51,7 @@
     group: root
     mode: "0644"
     owner: root
+  when: not kubernetes_containerd_config_stat.stat.exists
   notify: Restart containerd
 - name: Enable the systemd cgroup driver in containerd.
   ansible.builtin.replace:

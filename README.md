@@ -125,8 +125,7 @@ kubernetes_config_init_configuration:
 kubernetes_config_kube_proxy_configuration: {}
 kubernetes_config_kubelet_configuration:
   cgroupDriver: cgroupfs
-kubernetes_flannel_manifest_file: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
-kubernetes_flannel_manifest_file_rbac: "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml"
+kubernetes_flannel_manifest_file: "https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml"
 kubernetes_ignore_preflight_errors: all
 kubernetes_join_command_extra_opts: ""
 kubernetes_kubeadm_init_extra_opts: ""

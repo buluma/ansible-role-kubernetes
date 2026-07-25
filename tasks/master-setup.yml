@@ -70,13 +70,10 @@
     src: /etc/kubernetes/admin.conf
     state: link
 - name: master-setup | Configure Flannel networking.
-  ansible.builtin.command: "{{ item }}"
+  ansible.builtin.command: "kubectl apply -f {{ kubernetes_flannel_manifest_file }}"
   changed_when: "'created' in flannel_result.stdout"
   register: flannel_result
   when: kubernetes_pod_network.cni == 'flannel'
-  with_items:
-    - kubectl apply -f {{ kubernetes_flannel_manifest_file_rbac }}
-    - kubectl apply -f {{ kubernetes_flannel_manifest_file }}
 - name: master-setup | Configure Calico networking.
   ansible.builtin.command: "{{ item }}"
   changed_when: "'created' in calico_result.stdout"

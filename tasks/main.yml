@@ -56,7 +56,7 @@
 - name: Configure containerd's CRI snapshotter.
   ansible.builtin.replace:
     path: /etc/containerd/config.toml
-    regexp: 'snapshotter = "overlayfs"'
+    regexp: "snapshotter = (['\"])overlayfs\\1"
     replace: 'snapshotter = "{{ kubernetes_containerd_snapshotter }}"'
   when: kubernetes_containerd_snapshotter is defined
   notify: Restart containerd

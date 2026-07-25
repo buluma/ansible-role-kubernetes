@@ -13,17 +13,42 @@
     mode: "0644"
     owner: root
     src: kubeadm-kubelet-config.j2
-- name: master-setup | Initialize Kubernetes master with kubeadm init
-  ansible.builtin.command: "kubeadm init --config {{ kubernetes_kubeadm_kubelet_config_file_path }} {{ kubernetes_kubeadm_init_extra_opts }}\n"
+- name: master-setup | DEBUG print containerd config.toml
+  ansible.builtin.command: cat /etc/containerd/config.toml
   changed_when: false
-  register: kubeadmin_init
-  when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is not defined)
-- name: master-setup | Initialize Kubernetes master with kubeadm init and ignore_preflight_errors
-  ansible.builtin.command: "kubeadm init --config {{ kubernetes_kubeadm_kubelet_config_file_path }} --ignore-preflight-errors={{ kubernetes_ignore_preflight_errors
-    }} {{ kubernetes_kubeadm_init_extra_opts }}\n"
-  changed_when: false
-  register: kubeadmin_init
-  when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is defined)
+- name: master-setup | Initialize Kubernetes master with kubeadm init (with debug on failure)
+  block:
+    - name: master-setup | Initialize Kubernetes master with kubeadm init
+      ansible.builtin.command: "kubeadm init --config {{ kubernetes_kubeadm_kubelet_config_file_path }} {{ kubernetes_kubeadm_init_extra_opts }}\n"
+      changed_when: false
+      register: kubeadmin_init
+      when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is not defined)
+    - name: master-setup | Initialize Kubernetes master with kubeadm init and ignore_preflight_errors
+      ansible.builtin.command: "kubeadm init --config {{ kubernetes_kubeadm_kubelet_config_file_path }} --ignore-preflight-errors={{ kubernetes_ignore_preflight_errors
+        }} {{ kubernetes_kubeadm_init_extra_opts }}\n"
+      changed_when: false
+      register: kubeadmin_init
+      when: (not kubernetes_init_stat.stat.exists) and (kubernetes_ignore_preflight_errors is defined)
+  rescue:
+    - name: master-setup | DEBUG containerd journal
+      ansible.builtin.command: journalctl -u containerd --no-pager -n 150
+      changed_when: false
+      failed_when: false
+      register: kubernetes_debug_containerd_journal
+    - name: master-setup | DEBUG print containerd journal
+      ansible.builtin.debug:
+        var: kubernetes_debug_containerd_journal.stdout_lines
+    - name: master-setup | DEBUG crictl pods -a
+      ansible.builtin.command: crictl -r unix:///var/run/containerd/containerd.sock pods -a
+      changed_when: false
+      failed_when: false
+      register: kubernetes_debug_crictl_pods
+    - name: master-setup | DEBUG print crictl pods -a
+      ansible.builtin.debug:
+        var: kubernetes_debug_crictl_pods.stdout_lines
+    - name: master-setup | DEBUG re-raise the original kubeadm init failure
+      ansible.builtin.fail:
+        msg: "kubeadm init failed: {{ kubeadmin_init.stderr | default('see debug output above') }}"
 - name: master-setup | Print the init output to screen.
   ansible.builtin.debug:
     var: kubeadmin_init.stdout

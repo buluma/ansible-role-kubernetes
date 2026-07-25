@@ -13,9 +13,13 @@
     mode: "0644"
     owner: root
     src: kubeadm-kubelet-config.j2
-- name: master-setup | DEBUG print containerd config.toml
-  ansible.builtin.command: cat /etc/containerd/config.toml
+- name: master-setup | DEBUG grep snapshotter line in containerd config.toml
+  ansible.builtin.command: grep -n snapshotter /etc/containerd/config.toml
   changed_when: false
+  register: kubernetes_debug_containerd_snapshotter_line
+- name: master-setup | DEBUG print snapshotter line
+  ansible.builtin.debug:
+    var: kubernetes_debug_containerd_snapshotter_line.stdout_lines
 - name: master-setup | Initialize Kubernetes master with kubeadm init (with debug on failure)
   block:
     - name: master-setup | Initialize Kubernetes master with kubeadm init

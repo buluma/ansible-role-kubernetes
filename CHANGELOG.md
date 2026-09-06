@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- sync README, preserve /lib/modules mount in molecule.yml [\#20](https://github.com/buluma/ansible-role-kubernetes/pull/20) ([buluma](https://github.com/buluma))
 - chore\(deps\): bump ansible/ansible-lint from 26.6.0 to 26.8.0 [\#19](https://github.com/buluma/ansible-role-kubernetes/pull/19) ([dependabot[bot]](https://github.com/apps/dependabot))
 - chore\(deps\): bump release-drafter/release-drafter from 7 to 7.6.0 [\#18](https://github.com/buluma/ansible-role-kubernetes/pull/18) ([dependabot[bot]](https://github.com/apps/dependabot))
 

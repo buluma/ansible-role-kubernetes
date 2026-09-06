@@ -20,6 +20,9 @@ platforms:
     cgroupns_mode: host
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # sysctl-setup.yml modprobes overlay/br_netfilter - needs the host's
+      # module files to find them. ansible-generator's molecule.yml
+      # template doesn't know about this and drops it on regenerate.
       - /lib/modules:/lib/modules:ro
     privileged: true
     pre_build_image: true

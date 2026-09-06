@@ -52,7 +52,8 @@ This example is taken from [`molecule/default/converge.yml`](https://github.com/
     - role: buluma.kubernetes
   vars:
     docker_install_compose: false
-    kubernetes_kubelet_extra_args: --fail-swap-on=false --cgroup-driver=cgroupfs
+    kubernetes_containerd_snapshotter: native
+    kubernetes_kubelet_extra_args: --fail-swap-on=false
 ```
 
 The machine needs to be prepared. In CI this is done using [`molecule/default/prepare.yml`](https://github.com/buluma/ansible-role-kubernetes/blob/master/molecule/default/prepare.yml):
@@ -98,6 +99,12 @@ The machine needs to be prepared. In CI this is done using [`molecule/default/pr
     - role: buluma.core_dependencies
     - role: buluma.setuptools
     - role: buluma.docker
+      # ansible-role-docker has no repository-setup logic and never
+      # carried a working package on RHEL-family (see its own
+      # meta/preferences.yml); docker_ce handles that case instead.
+      when: ansible_facts['os_family'] != 'RedHat'
+    - role: buluma.docker_ce
+      when: ansible_facts['os_family'] == 'RedHat'
 ```
 
 Also see a [full explanation and example](https://buluma.github.io/how-to-use-these-roles.html) on how to use these roles.
@@ -124,7 +131,7 @@ kubernetes_config_init_configuration:
     advertiseAddress: "{{ kubernetes_apiserver_advertise_address | default(ansible_facts['default_ipv4'].address, true) }}"
 kubernetes_config_kube_proxy_configuration: {}
 kubernetes_config_kubelet_configuration:
-  cgroupDriver: cgroupfs
+  cgroupDriver: systemd
 kubernetes_flannel_manifest_file: "https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml"
 kubernetes_ignore_preflight_errors: all
 kubernetes_join_command_extra_opts: ""
@@ -165,6 +172,7 @@ The following roles are used to prepare a system. You can prepare your system in
 |-------------|--------|
 |[buluma.bootstrap](https://galaxy.ansible.com/buluma/bootstrap)|[![Build Status GitHub](https://github.com/buluma/ansible-role-bootstrap/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-bootstrap/actions)|
 |[buluma.docker](https://galaxy.ansible.com/buluma/docker)|[![Build Status GitHub](https://github.com/buluma/ansible-role-docker/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-docker/actions)|
+|[buluma.docker_ce](https://galaxy.ansible.com/buluma/docker_ce)|[![Build Status GitHub](https://github.com/buluma/ansible-role-docker_ce/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-docker_ce/actions)|
 |[buluma.setuptools](https://galaxy.ansible.com/buluma/setuptools)|[![Build Status GitHub](https://github.com/buluma/ansible-role-setuptools/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-setuptools/actions)|
 |[buluma.core_dependencies](https://galaxy.ansible.com/buluma/core_dependencies)|[![Build Status GitHub](https://github.com/buluma/ansible-role-core_dependencies/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-core_dependencies/actions)|
 
@@ -183,7 +191,7 @@ This role has been tested on these [container images](https://hub.docker.com/u/b
 |container|tags|
 |---------|----|
 |[EL](https://hub.docker.com/r/buluma/docker-molecule-images)|10, 9|
-|[Debian](https://hub.docker.com/r/buluma/docker-molecule-images)|all|
+|[Debian](https://hub.docker.com/r/buluma/docker-molecule-images)|13, 12|
 |[Fedora](https://hub.docker.com/r/buluma/docker-molecule-images)|44, 43|
 |[Ubuntu](https://hub.docker.com/r/buluma/docker-molecule-images)|all|
 

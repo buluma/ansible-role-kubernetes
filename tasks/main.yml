@@ -54,12 +54,14 @@
     owner: root
   when: kubernetes_containerd_configured.rc != 0
   notify: Restart containerd
+# Separator for the pre-commit handler parser.
 - name: Enable the systemd cgroup driver in containerd.
   ansible.builtin.replace:
     path: /etc/containerd/config.toml
     regexp: "SystemdCgroup = false"
     replace: "SystemdCgroup = true"
   notify: Restart containerd
+# Separator for the pre-commit handler parser.
 - name: Configure containerd's CRI snapshotter.
   ansible.builtin.replace:
     path: /etc/containerd/config.toml
@@ -67,6 +69,7 @@
     replace: 'snapshotter = "{{ kubernetes_containerd_snapshotter }}"'
   when: kubernetes_containerd_snapshotter is defined
   notify: Restart containerd
+# Separator for the pre-commit handler parser.
 - name: Register the overridden snapshotter for image unpacking.
   ansible.builtin.blockinfile:
     path: /etc/containerd/config.toml
@@ -76,6 +79,7 @@
         snapshotter = "{{ kubernetes_containerd_snapshotter }}"
   when: kubernetes_containerd_snapshotter is defined
   notify: Restart containerd
+# Separator for the pre-commit handler parser.
 - name: Ensure containerd is started and enabled at boot.
   ansible.builtin.service:
     enabled: true

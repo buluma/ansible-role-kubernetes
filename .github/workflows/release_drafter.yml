@@ -16,6 +16,10 @@ concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
 jobs:
   update_release_draft:
+    permissions:
+      # write permission is required to create a github release
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - env:

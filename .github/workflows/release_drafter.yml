@@ -24,4 +24,4 @@ jobs:
     steps:
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: release-drafter/release-drafter@v7.7.0
+        uses: release-drafter/release-drafter@v7.9.0

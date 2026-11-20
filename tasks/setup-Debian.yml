@@ -40,7 +40,8 @@
     _kubernetes_apt_repository_uri: "{{ _kubernetes_apt_repository_rest[0] | regex_replace('^\\w+://', '') | regex_replace('^[^/]*@', '') }}"
 # kubernetes_apt_repository is a one-line "deb [options] URI SUITE [COMPONENT...]"
 # string, split here into the parts deb822_repository needs.
-- name: setup-Debian | Add Kubernetes repository.
+# The noqa is there because ansible-lint can't validate the templated types.
+- name: setup-Debian | Add Kubernetes repository.  # noqa: args[module]
   ansible.builtin.deb822_repository:
     name: "{{ _kubernetes_apt_repository_uri | regex_replace('[^A-Za-z0-9]+', '_') | trim('_') }}"
     types: "{{ _kubernetes_apt_repository_types }}"
